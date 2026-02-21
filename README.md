@@ -76,25 +76,90 @@
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+Follow these steps to set up and run the Family Countries Travel Tracker locally.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
+* Node.js (v14 or higher)
 * npm
   ```sh
   npm install npm@latest -g
   ```
+* A Neon account (free tier available at https://neon.tech)
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app.
+1. Clone the repository
+   ```sh
+   git clone https://github.com/chiquan2005/Family-countries-travel-tracker.git
+   cd Family-countries-travel-tracker
+   ```
 
-Install NPM packages
+2. Install NPM packages
    ```sh
    npm install
    ```
+
+3. Set up Neon Database
+
+   a. Go to https://neon.tech and create a free account
+
+   b. Create a new project
+
+   c. Copy your connection string (it looks like: `postgresql://user:password@host/database?sslmode=require`)
+
+   d. In your Neon SQL Editor, run the following SQL to set up your database:
+
+   ```sql
+   -- Create countries table (you'll need to import country data)
+   CREATE TABLE countries (
+     country_code CHAR(2) PRIMARY KEY,
+     country_name VARCHAR(100) NOT NULL
+   );
+
+   -- Create users table
+   CREATE TABLE users (
+     id SERIAL PRIMARY KEY,
+     name VARCHAR(15) UNIQUE NOT NULL,
+     color VARCHAR(15)
+   );
+
+   -- Create visited_countries table
+   CREATE TABLE visited_countries (
+     id SERIAL PRIMARY KEY,
+     country_code CHAR(2) NOT NULL,
+     user_id INTEGER REFERENCES users(id)
+   );
+
+   -- Insert initial users
+   INSERT INTO users (name, color)
+   VALUES ('Angela', 'teal'), ('Jack', 'powderblue');
+
+   -- Insert some sample visited countries
+   INSERT INTO visited_countries (country_code, user_id)
+   VALUES ('FR', 1), ('GB', 1), ('CA', 2), ('FR', 2);
+   ```
+
+4. Configure Environment Variables
+
+   Create a `.env` file in the root directory:
+   ```sh
+   cp .env.example .env
+   ```
+
+   Edit `.env` and add your Neon connection string:
+   ```
+   DATABASE_URL=your_neon_connection_string_here
+   PORT=3000
+   NODE_ENV=development
+   ```
+
+5. Start the application
+   ```sh
+   node index.js
+   ```
+
+6. Open your browser and navigate to `http://localhost:3000`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -102,10 +167,70 @@ Install NPM packages
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-Use can use this app to track the countries that your family has visited just by adding the country's name.
 
-You can switch between family members and choose the color that you like.
+This app allows you to track the countries that your family has visited.
 
+### Features:
+- Add countries by typing the country name
+- Switch between family members to view their visited countries
+- Add new family members with custom colors
+- Each family member has their own list of visited countries
+- Visual map showing all visited countries
+
+### How to Use:
+1. Select a family member from the user buttons
+2. Type a country name and click "ADD" to add it to their visited countries
+3. Click "Add Family Member" to create a new user with a custom name and color
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- DEPLOYMENT -->
+## Deployment
+
+### Deploy to Render (Recommended)
+
+1. Push your code to GitHub
+
+2. Go to https://render.com and sign up/login
+
+3. Click "New +" and select "Web Service"
+
+4. Connect your GitHub repository
+
+5. Configure the service:
+   - Name: family-travel-tracker
+   - Environment: Node
+   - Build Command: `npm install`
+   - Start Command: `node index.js`
+
+6. Add Environment Variable:
+   - Key: `DATABASE_URL`
+   - Value: Your Neon connection string
+
+7. Click "Create Web Service"
+
+Your app will be live at `https://your-app-name.onrender.com`
+
+### Deploy to Railway
+
+1. Go to https://railway.app and sign up/login
+
+2. Click "New Project" > "Deploy from GitHub repo"
+
+3. Select your repository
+
+4. Add your Neon `DATABASE_URL` as an environment variable
+
+5. Railway will automatically detect Node.js and deploy
+
+### Deploy to Vercel
+
+1. Install Vercel CLI: `npm i -g vercel`
+
+2. Run `vercel` in your project directory
+
+3. Add environment variable in Vercel dashboard:
+   - `DATABASE_URL`: Your Neon connection string
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
